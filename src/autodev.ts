@@ -103,6 +103,14 @@ const autoDev = async (): Promise<void> => {
     `git show -s --format='%ci' origin/${base}`
   )
 
+  const branchExists = await execAndSlurp(
+    `git branch -l ${branch} --format='%(refname:short)'`
+  )
+  if (!branchExists) {
+    await exec(`git checkout -b ${branch} main`)
+    info(`created branch "${branch}"`)
+  }
+
   await exec(`git checkout ${base}`)
 
   if (pulls.length === 0) {
